@@ -32,16 +32,21 @@ def psycometrique(data_tuple):
         true_array_mean_used.append(array_mean_used)
     return true_array_result, true_array_mean_used
 
+def data_var2(file_path):
+    df = pd.read_csv(file_path)
+    var_used = df['S2_std'].tolist()
+    var_used = list(set(var_used))
+    return var_used
 
-def ploter(true_array_mean_used, true_array_result):
+def ploter(true_array_mean_used, true_array_result, var):
     plt.figure(figsize=(7,5))
-    val = [0,2,4,6,8]
+
     seuil = 0.5
     print("=== Points d’intersection avec P = 0.5 ===")
-
+    x_stars = []
     for idx, (mean_used, mean_res) in enumerate(zip(true_array_mean_used, true_array_result)):
         # tracer la courbe et récupérer la couleur
-        line, = plt.plot(mean_used, mean_res, 'o-', label=f'var = {val[idx]}')
+        line, = plt.plot(mean_used, mean_res, 'o-', label=f'var = {var[idx]}')
         color = line.get_color()
 
         # --- recherche du passage par 0.5 (interpolation linéaire) ---
@@ -60,9 +65,10 @@ def ploter(true_array_mean_used, true_array_result):
             plt.text(x_cross, seuil + 0.03, f'{x_cross:.2f}',
                      color=color, ha='center', va='bottom', fontsize=8)
             print(f'Bloc {idx+1} : x = {x_cross:.3f}')
+            x_stars.append(x_cross)
         else:
             print(f'Bloc {idx+1} : pas de croisement avec 0.5')
-
+            
     # ligne horizontale P = 0.5
     plt.axhline(seuil, color='red', linestyle='--',
                 linewidth=1.5, label='Chance level (0.5)')
@@ -74,7 +80,7 @@ def ploter(true_array_mean_used, true_array_result):
     plt.legend()
     plt.tight_layout()
     plt.show()
-
+    return x_stars
 
 
     
@@ -86,13 +92,27 @@ def reading_csv(file_path):
     print(len(result))
     return data_tuple
 
+
+def slope_x(x_star, var2, var1=0.2):
+    slope = [(x_star[i] / (var2[i] + var1)) for i in range(len(x_star))]
+    plt.plot(range(1, len(slope)+1), slope)
+    plt.xlabel("Index")
+    plt.ylabel("Slope")
+    plt.title("Slope evolution")
+    plt.grid(True, alpha=0.3)
+    plt.show()
+    return slope
+
+
 def main():
     print('test')
     file_path = "C:\\Users\\gabri\\Desktop\\bayesian\\experiment_results.csv"  # Replace with your CSV file path
     data_tuple = reading_csv(file_path)
+    var2 = data_var2(file_path)
     array_mean_result, array_mean_used = psycometrique(data_tuple)
-    ploter(array_mean_result, array_mean_used)
-    
+    x_stars = ploter(array_mean_result, array_mean_used, var2)
+    slope = slope_x(x_stars, var2)
+    print(slope)
     
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ def psycometrique(data_tuple):
     
     val = list(range(0, n, block_size))
     
-    for j in range(4):
+    for j in range(5):
         array_mean_result = []
         array_mean_used = []
         for i in range(0, size_one_block, block_size):
@@ -35,13 +35,13 @@ def psycometrique(data_tuple):
 
 def ploter(true_array_mean_used, true_array_result):
     plt.figure(figsize=(7,5))
-
+    val = [0,2,4,6,8]
     seuil = 0.5
     print("=== Points d’intersection avec P = 0.5 ===")
 
     for idx, (mean_used, mean_res) in enumerate(zip(true_array_mean_used, true_array_result)):
         # tracer la courbe et récupérer la couleur
-        line, = plt.plot(mean_used, mean_res, 'o-', label=f'Bloc {idx+1}')
+        line, = plt.plot(mean_used, mean_res, 'o-', label=f'var = {val[idx]}')
         color = line.get_color()
 
         # --- recherche du passage par 0.5 (interpolation linéaire) ---

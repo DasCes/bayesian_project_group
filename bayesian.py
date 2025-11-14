@@ -36,8 +36,36 @@ def psycometrique(data_tuple):
 def ploter(true_array_mean_used, true_array_result):
     plt.figure(figsize=(7,5))
 
+    seuil = 0.5
+    print("=== Points d’intersection avec P = 0.5 ===")
+
     for idx, (mean_used, mean_res) in enumerate(zip(true_array_mean_used, true_array_result)):
-        plt.plot(mean_used, mean_res, 'o-', label=f'Bloc {idx+1}')
+        # tracer la courbe et récupérer la couleur
+        line, = plt.plot(mean_used, mean_res, 'o-', label=f'Bloc {idx+1}')
+        color = line.get_color()
+
+        # --- recherche du passage par 0.5 (interpolation linéaire) ---
+        x_cross = None
+        for x1, y1, x2, y2 in zip(mean_used[:-1], mean_res[:-1],
+                                  mean_used[1:], mean_res[1:]):
+            # y1 et y2 de part et d'autre de 0.5 (ou un au-dessus / un égal, etc.)
+            if (y1 - seuil) * (y2 - seuil) <= 0 and y1 != y2:
+                # interpolation linéaire
+                x_cross = x1 + (seuil - y1) * (x2 - x1) / (y2 - y1)
+                break
+
+        # si on a trouvé une intersection, on la marque
+        if x_cross is not None:
+            plt.scatter([x_cross], [seuil], color=color, zorder=5)
+            plt.text(x_cross, seuil + 0.03, f'{x_cross:.2f}',
+                     color=color, ha='center', va='bottom', fontsize=8)
+            print(f'Bloc {idx+1} : x = {x_cross:.3f}')
+        else:
+            print(f'Bloc {idx+1} : pas de croisement avec 0.5')
+
+    # ligne horizontale P = 0.5
+    plt.axhline(seuil, color='red', linestyle='--',
+                linewidth=1.5, label='Chance level (0.5)')
 
     plt.xlabel('Mean S2 value')
     plt.ylabel('Mean decision (P[1])')
@@ -46,6 +74,7 @@ def ploter(true_array_mean_used, true_array_result):
     plt.legend()
     plt.tight_layout()
     plt.show()
+
 
 
     

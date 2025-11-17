@@ -7,7 +7,7 @@ def psycometrique(data_tuple,var2):
     result, mean_used = data_tuple
     true_array_mean_used = []
     true_array_result = []
-    block_size = 200          
+    block_size = 200           
     big_blocs = 11           # nb de valeurs de S2 par courbe
     size_one_block = block_size * big_blocs  
 
@@ -117,7 +117,11 @@ def reading_csv(file_path):
 def slope_x(x_star, var2, var1=0.2):
     slopes = []
     for x, v in zip(x_star, var2):
-        slopes.append(x / (v**2 + var1**2))
+        if x is None:
+            slopes.append(np.nan)   # ou ne rien ajouter, selon ce que tu veux
+            # var_valid ne prend pas ce v si tu veux vraiment ignorer ce point
+        else : 
+            slopes.append(x / (v**2 + var1**2))
 
     return slopes
 

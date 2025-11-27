@@ -7,7 +7,7 @@ def psycometrique(data_tuple,var2):
     result, mean_used = data_tuple
     true_array_mean_used = []
     true_array_result = []
-    block_size = 200           
+    block_size = 1500           
     big_blocs = 11           # nb de valeurs de S2 par courbe
     size_one_block = block_size * big_blocs  
 
@@ -128,7 +128,7 @@ def slope_x(x_star, var2, var1=0.2):
 
 def main():
     print('test')
-    file_path = "C:\\Users\\gabri\\Desktop\\bayesian\\experiment_results_test.csv"
+    file_path = "C:\\Users\\gabri\\Desktop\\bayesian\\experiment_results_1500.csv"
     data_tuple = reading_csv(file_path)
     var2 = data_var2(file_path)
     array_mean_result, array_mean_used = psycometrique(data_tuple, var2)
